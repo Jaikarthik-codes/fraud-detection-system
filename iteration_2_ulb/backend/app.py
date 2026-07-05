@@ -1,8 +1,6 @@
 from flask import Flask, render_template, request
 from flask_cors import CORS
 from flask import jsonify
-from sklearn.preprocessing import StandardScaler
-import pandas as pd
 import joblib
 import numpy as np
 
@@ -13,9 +11,7 @@ CORS(app)
 model = joblib.load('../models/rf_model.pkl')
 
 # Load raw data to fit scaler
-df_ref = pd.read_csv('../data/raw/creditcard.csv')
-scaler = StandardScaler()
-scaler.fit(df_ref[['Amount', 'Time']])
+scaler = joblib.load('../models/scaler.pkl')
 
 # Real transaction presets from test set
 presets = {
