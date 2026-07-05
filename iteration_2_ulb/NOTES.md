@@ -116,25 +116,37 @@ Hard voting counts yes/no — two aggressive models outvote RF.
 Soft voting averages confidence levels — RF's lower confidence 
 pulls the average down, reducing false alarms from 545 to 110.
 
-## Step 5 - Flask App
+## Step 5 - Flask Backend + React Frontend Connection
 
-Built simple web app to demo fraud detection model.
+Flask changes made:
+- Added flask-cors to handle cross-origin requests from React
+- Updated /predict route to accept JSON instead of form data
+- Added StandardScaler fitted on raw creditcard.csv to scale 
+  Amount and Time on the fly before feeding to model
+- Returns JSON: { prediction: "fraud/legitimate", confidence: 0.xxxx }
 
-Files:
-- backend/app.py → loads rf_model.pkl, handles prediction
-- backend/templates/index.html → form with transaction presets
+React frontend (built by mentor):
+- Vite + React app with dark theme and FraudLens branding
+- Dropdown with 5 real fraud preset transactions from ULB test set
+- Sends POST request to /predict with all 30 feature values
+- Displays result with confidence bar
 
-How it works:
-- User selects a preset transaction from dropdown
-- Flask receives selection, looks up 30 feature values
-- Feeds features to rf_model.predict() and predict_proba()
-- Returns FRAUD or LEGITIMATE + probability percentage
+Vite proxy added in vite.config.ts:
+- /predict proxied to http://127.0.0.1:5000
+- Allows React (port 5173) to talk to Flask (port 5000)
 
-Why preset transactions instead of manual input:
-V1-V28 are PCA transformed — real users wouldn't know these values.
-Used real rows from test set so predictions are meaningful.
+Why real rows from test set as presets:
+V1-V28 are PCA transformed — users can't enter these manually.
+Real rows from test set give honest, meaningful predictions.
+Fake/illustrative rows don't match patterns the model learned.
 
-Results on 6 presets:
-- Fraud 3: correctly flagged as FRAUD (97% probability)
-- Fraud 1 and 2: missed (47% and 7%) — consistent with 0.82 recall
-- All 3 legitimate: correctly identified (0% fraud probability)
+Test results on 5 real fraud presets:
+- 4 out of 5 flagged as FRAUD — consistent with 0.82 recall
+- 1 missed — model misses ~18% of fraud cases by design
+- This is honest behavior, not a bug
+
+## Data
+Large CSV files not tracked in git (exceed GitHub 100MB limit).
+Added to .gitignore.
+Download creditcard.csv from Kaggle ULB Credit Card Fraud Detection
+and place in iteration_2_ulb/data/raw/
