@@ -1,5 +1,5 @@
 # FraudLens
-Multi-model fraud detection system for credit card transactions.
+Multimodel fraud detection system for credit card transactions.
 Built from scratch to understand every decision deeply enough 
 to defend it in a technical interview.
 

@@ -150,3 +150,22 @@ Large CSV files not tracked in git (exceed GitHub 100MB limit).
 Added to .gitignore.
 Download creditcard.csv from Kaggle ULB Credit Card Fraud Detection
 and place in iteration_2_ulb/data/raw/
+
+## Step 6 - Full Evaluation Results
+
+Model              Precision  Recall   F1      AUC-ROC
+Random Forest        0.82      0.82    0.82    0.9688  ← winner
+Gradient Boosting    0.11      0.90    0.19    0.9807
+AdaBoost             0.05      0.91    0.10    0.9747
+
+AUC-ROC explanation:
+Measures separation ability across all thresholds.
+All three models above 0.96 — all are excellent rankers.
+GB has highest AUC but worst precision at 0.5 threshold.
+Random Forest most balanced across all metrics.
+
+Confusion Matrix — Random Forest:
+True Negatives:  56,847  (legitimate correctly identified)
+False Positives:     17  (legitimate wrongly flagged)
+False Negatives:     18  (fraud missed)
+True Positives:      80  (fraud correctly caught)
