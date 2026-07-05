@@ -115,3 +115,26 @@ Why soft voting beat hard voting:
 Hard voting counts yes/no — two aggressive models outvote RF.
 Soft voting averages confidence levels — RF's lower confidence 
 pulls the average down, reducing false alarms from 545 to 110.
+
+## Step 5 - Flask App
+
+Built simple web app to demo fraud detection model.
+
+Files:
+- backend/app.py → loads rf_model.pkl, handles prediction
+- backend/templates/index.html → form with transaction presets
+
+How it works:
+- User selects a preset transaction from dropdown
+- Flask receives selection, looks up 30 feature values
+- Feeds features to rf_model.predict() and predict_proba()
+- Returns FRAUD or LEGITIMATE + probability percentage
+
+Why preset transactions instead of manual input:
+V1-V28 are PCA transformed — real users wouldn't know these values.
+Used real rows from test set so predictions are meaningful.
+
+Results on 6 presets:
+- Fraud 3: correctly flagged as FRAUD (97% probability)
+- Fraud 1 and 2: missed (47% and 7%) — consistent with 0.82 recall
+- All 3 legitimate: correctly identified (0% fraud probability)

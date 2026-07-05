@@ -1,9 +1,8 @@
 import pandas as pd
 
-df = pd.read_csv('../data/processed/creditcard_cleaned.csv')
+df = pd.read_csv('../data/raw/creditcard.csv')
+fraud = df[df['Class'] == 1][['Time','V1','V2','V3','V4','V5','V6','V7',
+'V8','V9','V10','V11','V12','V13','V14','V15','V16','V17','V18','V19',
+'V20','V21','V22','V23','V24','V25','V26','V27','V28','Amount']].head(5)
 
-fraud_samples = df[df['Class'] == 1].head(3)
-legit_samples = df[df['Class'] == 0].head(3)
-
-samples = pd.concat([fraud_samples, legit_samples])
-print(samples.to_dict('records'))
+print(fraud.to_dict('records'))

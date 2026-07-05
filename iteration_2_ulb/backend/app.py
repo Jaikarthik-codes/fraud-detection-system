@@ -1,11 +1,21 @@
 from flask import Flask, render_template, request
+from flask_cors import CORS
+from flask import jsonify
+from sklearn.preprocessing import StandardScaler
+import pandas as pd
 import joblib
 import numpy as np
 
 app = Flask(__name__)
+CORS(app)
 
 # Load the trained model
 model = joblib.load('../models/rf_model.pkl')
+
+# Load raw data to fit scaler
+df_ref = pd.read_csv('../data/raw/creditcard.csv')
+scaler = StandardScaler()
+scaler.fit(df_ref[['Amount', 'Time']])
 
 # Real transaction presets from test set
 presets = {
@@ -21,19 +31,37 @@ presets = {
 def home():
     return render_template('index.html', presets=presets.keys())
 
+
 @app.route('/predict', methods=['POST'])
 def predict():
-    preset_name = request.form['preset']
-    features = presets[preset_name]
+    data = request.get_json()
+
+    # Extract and scale Amount and Time
+    amount = [[data['Amount']]]
+    time = [[data['Time']]]
+    scaled_amount = scaler.transform([[data['Amount'], data['Time']]])[0][0]
+    scaled_time = scaler.transform([[data['Amount'], data['Time']]])[0][1]
+
+    # Build feature array in correct order
+    features = [
+        data['V1'], data['V2'], data['V3'], data['V4'],
+        data['V5'], data['V6'], data['V7'], data['V8'],
+        data['V9'], data['V10'], data['V11'], data['V12'],
+        data['V13'], data['V14'], data['V15'], data['V16'],
+        data['V17'], data['V18'], data['V19'], data['V20'],
+        data['V21'], data['V22'], data['V23'], data['V24'],
+        data['V25'], data['V26'], data['V27'], data['V28'],
+        scaled_amount, scaled_time
+    ]
+
     features_array = np.array(features).reshape(1, -1)
     prediction = model.predict(features_array)[0]
     probability = model.predict_proba(features_array)[0][1]
     result = "FRAUD" if prediction == 1 else "LEGITIMATE"
-    return render_template('index.html',
-                         presets=presets.keys(),
-                         result=result,
-                         probability=round(probability * 100, 2),
-                         selected=preset_name)
 
+    return jsonify({
+        'prediction': result.lower(),
+        'confidence': round(probability, 4)
+    })
 if __name__ == '__main__':
     app.run(debug=True)
