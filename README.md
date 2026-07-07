@@ -4,7 +4,7 @@ Built from scratch to understand every decision deeply enough
 to defend it in a technical interview.
 
 ## Project Structure
-fraudlens/
+FraudLens/
 ├── iteration_1_fraud_data/   ← Documented dead end (Fraud_Data.csv)
 └── iteration_2_ulb/          ← Final system (ULB Credit Card dataset)
     ├── backend/              ← Flask API + trained models
