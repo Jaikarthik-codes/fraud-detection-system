@@ -71,7 +71,7 @@ Download creditcard.csv from Kaggle:
 https://www.kaggle.com/datasets/mlg-ulb/creditcardfraud
 Place in iteration_2_ulb/data/raw/
 
-## Stack
+## Stacks Used
 Python, pandas, NumPy, scikit-learn, imbalanced-learn, 
 Flask, flask-cors, React, TypeScript, Vite
 
